@@ -11,11 +11,11 @@ param (
     [switch]$kurwa = $false
 )
 
-$vlcDir = "$env:USERPROFILE\VLC"
+$vlcDir = "$env:USERPROFILE\Downloads\vlc"
 if ($kurwa) {
     Invoke-WebRequest -Uri http://vlc.tv/r/anormaldayinrussia.xspf -OutFile $vlcdir
 } else {
     Invoke-WebRequest -uri http://vlc.tv/r/youtubehaiku.xspf -OutFile $vlcDir\memes.xspf
 }
 
-& 'C:\Program Files\VideoLAN\VLC\vlc.exe' memes.xspf
+& 'C:\Program Files\VideoLAN\VLC\vlc.exe' $vlcdir\memes.xspf
