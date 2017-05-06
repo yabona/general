@@ -11,6 +11,7 @@ Workflow Configure_System {
         [string]$domainName
     )
 
+    # change hostname, requires system reload...
     Rename-Computer -NewName $hostname -force
     
     # restart computer, then resume on restart...
@@ -18,6 +19,8 @@ Workflow Configure_System {
 
     # domain join
     Add-computer -DomainName $domainName -restart -Credential (Get-Credential) 
+
+    # todo :: add serverRole instalation step after this...
 }
 
 
