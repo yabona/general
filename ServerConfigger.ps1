@@ -1,4 +1,4 @@
-Write-host "
+﻿Write-host "
 Automagic server config-er
 # Yabones 2017 
 # open sourse asf pls send this to your aunt and grandparents and stuff
@@ -6,12 +6,11 @@ Automagic server config-er
 
 #declare system setup workflow...
 Workflow Configure_System {
-    parm (
+    param (
         [string]$hostname,
         [string]$domainName
     )
 
-    # change hostname, requires system reload...
     Rename-Computer -NewName $hostname -force
     
     # restart computer, then resume on restart...
@@ -19,8 +18,6 @@ Workflow Configure_System {
 
     # domain join
     Add-computer -DomainName $domainName -restart -Credential (Get-Credential) 
-
-    # todo :: add serverRole instalation step after this...
 }
 
 
@@ -49,9 +46,9 @@ do {
     # check changes
     Get-NetIPAddress | Select IPAddress,InterfaceAlias
 
-    [boolean]$continue = [boolean]$(Read-Host "Continue? [1/0]")
+    if ((Read-Host "Add another IP address? [Y/N]") -eq 'N') {break}
 
-} while ($continue) 
+} while ($true) 
 
 # Proceed to call workflow
 Configure_System -hostname $hostName -domainname $domainname
