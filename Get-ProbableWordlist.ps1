@@ -5,10 +5,8 @@
 
 $htmlRaw = (Invoke-WebRequest https://github.com/berzerk0/Probable-Wordlists/tree/master/Real-Passwords/Sorted-into-Chunks).links 
 
-# Link href locations 
+# Link href locations & cut the last field from the URL 
 $top2billion = ($htmlRaw | ? {$_.innerHtml -like "Top2Billion-Probable-*"}).href
-
-# cut the last field from the URL 
 $filelist = $top2billion | % {$_.split("/")[7] }
 
 # web location of source directory 
