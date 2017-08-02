@@ -1,0 +1,113 @@
+! ####################
+! PPPOE CONFIGURATION!
+! ISP config
+
+username $customer password Cisco12345
+
+ip local pool PPPoEipPool 172.20.30.10 172.30.20.20
+
+interface virtual-template 1
+  ip address 172.20.30.1 255.255.255.0
+  mtu 1494 
+  peer default ip address pool PPPoEipPool
+  ppp authentication chap callin
+
+bba-group pppoe global
+  virtual-template 1
+
+interface gigabitEthernet 0/1
+  pppoe enable group global
+  no shutdown 
+
+! ############################################
+! Cust1 config
+
+interface gigabitEthernet 0/1
+  pppoe enable 
+  pppoe-client dial-pool-number 1
+
+interface dialer 1
+  mtu 1494
+  ip address negotiated 
+  encapsulation ppp 
+dialer pool 1
+  ppp authentication chap callin 
+  ppp chap hostname $customer 
+  ppp chap password Cisco12345
+  
+ip route 0.0.0.0 0.0.0.0 dialer 1 
+
+interface gigabitEthernet 0/1
+  no shutdown
+  
+  
+  
+! ###############################################
+! logging
+
+ntp server 555.555.555.555 (fake ip)
+
+service timestamps log datetime msec
+
+logging host 10.11.12.13 
+
+logging trap emergencies   0
+logging trap alerts 	   1
+logging trap critical      2
+logging trap errors        3
+logging trap warnings	   4
+logging trap notifications 5
+logging trap information   6
+logging trap debugging     7
+
+clear logging <enter>
+
+show logging 
+
+! ###########################################
+! external border gateway proto
+
+router bgp 6969
+  neighbor 1.2.3.4 remote-as 420 
+  network 44.55.66.0 mask 255.255.255.0 
+  network 22.33.44.0 mask 255.255.255.0 
+
+show ip route [bgp]
+show ip bgp [summary]
+
+! ############################################
+! Generic Routing Encapsulation
+
+! the entrance to the tunnel
+interface tunnel 0
+  tunnel mode gre ip 
+  tunnel source gigabitEthernet 0/1
+  tunnel destination 66.77.88.99 
+  ip address 10.10.10.1 
+
+! where the mole people live
+interface tunnel 0
+  tunnel mode gre ip 
+  tunnel source gigabitEthernet 0/1
+  tunnel destination 22.33.44.55 
+  ip address 10.10.10.2 
+
+! ##############################################
+! basic shit for basic bitches
+
+hostname I-Copy-Shit-From-The-Internet
+
+enable secret class
+
+line vty 0 15
+  password cisco
+  login local
+  logging sync
+  transport input ssh
+ line console 0
+   password cisco
+   login
+   logging sync
+exit
+
+no ip domain lookup 
